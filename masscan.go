@@ -44,9 +44,9 @@ type (
 		Banner string `xml:"banner,attr" json:"banner"`
 	}
 	JsonRun struct {
-		IP        string   `json:"ip"`
-		Timestamp string   `json:"timestamp"`
-		Port      JsonPort `json:"ports"`
+		IP        string     `json:"ip"`
+		Timestamp string     `json:"timestamp"`
+		Port      []JsonPort `json:"ports"`
 	}
 	JsonPort struct {
 		PortId   uint16 `json:"port"`
@@ -57,16 +57,22 @@ type (
 	}
 )
 
-func ParseXML(filePath string) XMLRun {
+func ParseXML(filePath string) (XMLRun, error) {
 	r := XMLRun{}
-	dat, _ := ioutil.ReadFile(filePath)
+	dat, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return XMLRun{}, err
+	}
 	xml.Unmarshal(dat, &r)
-	return r
+	return r, nil
 }
 
-func ParseJSON(filePath string) []JsonRun {
+func ParseJSON(filePath string) ([]JsonRun, error) {
 	r := []JsonRun{}
-	dat, _ := ioutil.ReadFile(filePath)
+	dat, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return nil, err
+	}
 	json.Unmarshal(dat, &r)
-	return r
+	return r, nil
 }
